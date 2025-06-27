@@ -22,26 +22,33 @@ def home():
 
 @app.route("/add_or_edit_license", methods=["POST"])
 def add_or_edit_license():
-    data = request.get_json()
-    license_key = data.get("key")
-    expiry = data.get("expiry")
+    try:
+        data = request.get_json()
+        license_key = data.get("key")
+        expiry = data.get("expiry")
 
-    licenses = load_licenses()
+        if not license_key or not expiry:
+            return jsonify({"status": "error", "message": "Missing key or expiry"}), 400
 
-    # পুরনো লাইসেন্স মুছে ফেলা
-    licenses["licenses"] = [l for l in licenses["licenses"] if l["license_key"] != license_key]
+        licenses = load_licenses()
 
-    # নতুন লাইসেন্স যোগ
-    licenses["licenses"].append({
-        "license_key": license_key,
-        "expires": expiry,
-        "max_devices": 1,
-        "devices": [],
-        "blocked": False
-    })
+        # Remove existing license with the same key
+        licenses["licenses"] = [l for l in licenses["licenses"] if l["license_key"] != license_key]
 
-    save_licenses(licenses)
-    return jsonify({"status": "success"})
+        # Add new license
+        licenses["licenses"].append({
+            "license_key": license_key,
+            "expires": expiry,
+            "max_devices": 1,
+            "devices": [],
+            "blocked": False
+        })
+
+        save_licenses(licenses)
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
