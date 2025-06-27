@@ -19,7 +19,6 @@ def save_licenses(data):
 def home():
     return "✅ License Server is Running"
 
-# ✅ এই রুটটি আপনার কোডে ছিল না!
 @app.route("/add_or_edit_license", methods=["POST"])
 def add_or_edit_license():
     try:
