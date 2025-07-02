@@ -3,23 +3,26 @@ import json
 import requests
 import os
 
+# ✅ Dropbox Token & Path from Environment Variable
 DROPBOX_TOKEN = os.environ.get("DROPBOX_TOKEN")
 DROPBOX_PATH = "/admin_gui/licenses.json"
 
 app = Flask(__name__)
 
+# ✅ Download licenses.json from Dropbox
 def download_json():
     headers = {
         "Authorization": f"Bearer {DROPBOX_TOKEN}",
-        "Dropbox-API-Arg": json.dumps({ "path": DROPBOX_PATH }),
+        "Dropbox-API-Arg": json.dumps({ "path": DROPBOX_PATH })
     }
     response = requests.post("https://content.dropboxapi.com/2/files/download", headers=headers)
     if response.status_code == 200:
-        return response.json()
+        return json.loads(response.content)
     else:
         print("❌ Dropbox Download Error:", response.text)
         return None
 
+# ✅ Upload updated licenses.json to Dropbox
 def upload_json(data):
     headers = {
         "Authorization": f"Bearer {DROPBOX_TOKEN}",
@@ -37,6 +40,7 @@ def upload_json(data):
     )
     return response.status_code == 200
 
+# ✅ POST API to increase license used count
 @app.route("/update_used", methods=["POST"])
 def update_used():
     req = request.get_json()
@@ -64,5 +68,6 @@ def update_used():
     else:
         return jsonify({"success": False, "error": "Upload failed"}), 500
 
+# ✅ Local testing (not required on Render)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
