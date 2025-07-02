@@ -3,66 +3,73 @@ import json
 import requests
 import os
 
+# ✅ Dropbox Token & Path (TOKEN HARDCODED)
+DROPBOX_TOKEN = "sl.u.AF2lGO7XFwL4T0L0insEgijAjIem7VeIi3hS7VwMuRIphiHiunaSIv-3FEb4B5jowW0rzgTL1T6AiQUKBE0fTPBAbf6rpkL0MYWPM_JJYCxUQKXx1U7-isDZbiIVFyNm0P-Lngt0vr7Ci_li8oCPz0Crz6dLvx7q57mPYdY7phqkFPi6EHMFMmjRZH63DbdBzI1Tdv3jGq0IXfAjyIDu-dBwswkf-eA2xWGN-FX37oUbEeSP9PrZoZ-DJ80R9_60RjxowL5gfLO_h21hb6z7E02HkiI-c62SFGfGFnIEHfcNrr3qpGa4-Nm3Nd43LwtYT1qqZxXZQryekh9RmbY7aNdZoy5cMDxEmFzD6bN8zmxnsCOVmSey9vyRUtn5oA6QmMYpvmEWH5Ud8d10AODZinScIzXNjKAjSBfDlkOxp6fEPmlQlklgGp2tQAUFu53CweQv1hJJ8q26MWwFc2NOs23yLSGTqebkG-fi9zG85YTglA444akHND6YzUMSJogYBtE9LIa2wbdMqssjS21thuYzrH2cd_oyIuVjjRDh-qi8Btt4m86XHs_NgjmMvlcxuPnPNFms2S8XBl5vvYV-MKM8BTNInZfimqHPVM2LDKyiBfo8K55Ctg7sznDqMmFxigZbi4HS0w2W-dB-Jymx2YedQ4BNeFoLo9ubT-mlO2cJHH56_827WyVNlavDWGWeQ2uErSKIvxhq8JksnvwXbgO5C2--L7fU-zsM5nh3yYP87ouE0h_rX94wRD6VTVpQQO7XKMdpaB87atzZZKwFWVjJCt-VNscdbzsqfD1Y_NIlk7hikqK-TJuBS5cjwdVKJB7Ugdbo2vYETlFk_ZyTqoo88Uh2B2KOqnmHs3U4tcGX9C67YoOzSxbMCBYejz7UgovIJqTQXhecuObEMffvqfNn6kv7aPJDImRiJ019UZz8WSBaZQo3k2nA43YjmKpJkCzRUQqLQQvcPbvBGH6r_RiVo7waiaErWm0IMcazs2w5M9ebj_qGyDGosiBkel8jhIUbf4fLKhOYpZcyoaPp7_dmrICy5W7GQ7PZwv9peyi52i4CxGAzestz0O6KOzJ8sAqbRPO43tMTK4r-avcGr0OyoJvxx5e5hK0RjXN3fi0_NM0xzLyXqrvDlxApF1Y95E96qoiqNno8VYe_loeqX6ob9KpQVcLIXMdl6P3fnvsUJCxWdbdYEGeHjr0f2YpAKsYPbsYhfHb4354F9Pa9TAp5jXLawf_0sAhQH0F0Ek0ktrjxmXSAyHqNUmShrOoY7pGuGMaEyuqCLEn9GqgB4h5XE_YKUBIO1vZv_WIc27dri2OK17FE9s7TLlEubTbvqoGkDTAaadi9fG4nopKIBY1-ZerslXgb_wGfv69S2bDLzOWwgcrJe-daQhUVuFWoI-njlLkxzqpXsihs3VFKG7oq"
+DROPBOX_PATH = "/admin_gui/licenses.json"
+
 app = Flask(__name__)
 
-# ✅ Dropbox Token & File Path
-DROPBOX_TOKEN = "sl.u.AF0tz4u_uow9jp8FLM-0YEDIpnoQjrWLRA4fGhPpQOPJ5bviuwL9WoRLHo7DPK7W7ODRQ81VJxwDQb3wEb_369s8uXnG7d8mU9Q8lH8j_fjyz4kyHKgbgQ5HZaTduDgncvXNVsxCydiPZjBEcO6R6esIlObJps2BwETYswtFciOT-7H7obu3VB2SZ0oynC47e_BnX-_G-2fofXnxRACiRCCQRVGrw7O8rMSopDRPpbPbFtrtZV44w3MAmtGxFL8L9w8IG4EmjhEixoQGDytSMhnvDPsue-uxvSa5Jvvn9dORMVWLCoMK2vLnDH4RrNWm12iYWEx0dJNVKMjcC4PMfSMEdogvWlFUTbvJmL4OaRNiPL0vtcYKThWOtbtojJqzPvQjO-SO2K0B6JEDo6gLT4mg3T_5C3fLaZKktakV-Fenf5Vtd9Rdv8951ojkycRU3PEAo04HsPWchgZzk95UVDAwx52-jGJF6bwONzP_wORcIzAzOq7fKw5pueq59D_GUFDg517iWxW7y49qi12qU2jHgwPUtHPWZTONkY4hmcI07jQajOIwRxpgyqp0WmEqRYODsKSwgTXr-pqeJ5wCE6tzthM28O9ZpSKIVRtnZqodoKBgSsRmqQUQqFUv5Naze4ij1AdBKNBrEM2YhvdXWsELA2aTOgvDOwdODi3sgbOllsmrDzQt38HCe9RY8iDUF1Fy8Ewdh9yCI53QqIHqevk0AxxJFYLgosa7o9hmjQa3SV9m01Jwzs47SU6M3XoKRyCFnx9Fp1gOIItVT3Kqci5K40Ga6TJbhXBBWslz6xTj1m5lWP4xjo-e0tHgdjM6MVyyXZl94TFfFnUs3pj2Nr0DtQyWSO8L-gyZvG_ZAAE9A1C4wYJNnUMfP4FcKXlaF65O7HikGDEPY-Wl9J-e7WoRWjIsF4EkKYqITjnNe_mrTcUr3jI6Rdrh-40odfe9wzoc4uvtw8pyx9ICmiHepholZdqk-4zIVgCWFP_Qg9qNPoBEhZc55Ecmme_6IEJGuMu96PxCsgX3ozgpWE1xSHGPWI7i4iO3vJLV_CXSpcECVYw4y5IEYt8QOkYh1aVg9g9jGe6MTuUsfJvhHHBw212YxiJCoUo8A5dmLQ0E9QYBIf7IcdbYNApxvUWWQddR7fMLLPd7PxpNItsifY9K_fEK8Cf0pMUZX3N86REXmalWT4F85yQhHSNR_xljrzWUodwyxwmnitASpqoBZ36q0rTFCPyLF7bwvZWvYCXiwZPp4esOLTmT5jHz_Uo6zGu6K_aEGxWpf5xu06H0IYCMBjVHuvZ9ZLv4N3t3Q__AzoA9J-NUKQ6jHGXQuuT1g-cg9diKQy0Q3GorpLpMzRA4mLcPGs1u_ogzG6B0kqu5m4zfoP_ixkOSA5GK_FB5fyrakhOoI4ZyaXooywawtKWDPzVH"
-DROPBOX_FILE_PATH = "/admin_gui/licenses.json"
-
-DROPBOX_UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload"
-DROPBOX_DOWNLOAD_URL = "https://content.dropboxapi.com/2/files/download"
-
-HEADERS = {
-    "Authorization": f"Bearer {DROPBOX_TOKEN}",
-}
-
-# ✅ JSON Download
+# ✅ Download licenses.json from Dropbox
 def download_json():
-    headers = HEADERS.copy()
-    headers["Dropbox-API-Arg"] = json.dumps({"path": DROPBOX_FILE_PATH})
-    res = requests.post(DROPBOX_DOWNLOAD_URL, headers=headers)
-    return json.loads(res.content)
+    headers = {
+        "Authorization": f"Bearer {DROPBOX_TOKEN}",
+        "Dropbox-API-Arg": json.dumps({
+            "path": DROPBOX_PATH
+        }),
+    }
+    response = requests.post("https://content.dropboxapi.com/2/files/download", headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("❌ Dropbox Download Error:", response.text)
+        return None
 
-# ✅ JSON Upload
+# ✅ Upload licenses.json to Dropbox
 def upload_json(data):
-    headers = HEADERS.copy()
-    headers["Content-Type"] = "application/octet-stream"
-    headers["Dropbox-API-Arg"] = json.dumps({
-        "path": DROPBOX_FILE_PATH,
-        "mode": "overwrite"
-    })
-    requests.post(DROPBOX_UPLOAD_URL, headers=headers, data=json.dumps(data).encode())
+    headers = {
+        "Authorization": f"Bearer {DROPBOX_TOKEN}",
+        "Content-Type": "application/octet-stream",
+        "Dropbox-API-Arg": json.dumps({
+            "path": DROPBOX_PATH,
+            "mode": "overwrite",
+            "mute": True
+        })
+    }
+    response = requests.post(
+        "https://content.dropboxapi.com/2/files/upload",
+        headers=headers,
+        data=json.dumps(data, indent=4).encode("utf-8")
+    )
+    return response.status_code == 200
 
-# ✅ Activation API
-@app.route("/activate", methods=["POST"])
-def activate():
+# ✅ POST API: /update_used
+@app.route("/update_used", methods=["POST"])
+def update_used():
     req = request.get_json()
-    license_key = req.get("license_key")
+    key = req.get("license_key", "").strip()
 
-    if not license_key:
-        return jsonify({"success": False, "message": "❌ License key missing"}), 400
+    if not key:
+        return jsonify({"success": False, "error": "Missing license key"}), 400
 
-    try:
-        data = download_json()
-        licenses = data.get("licenses", [])
+    data = download_json()
+    if not data:
+        return jsonify({"success": False, "error": "Could not load licenses"}), 500
 
-        for lic in licenses:
-            if lic.get("license_key") == license_key:
-                lic["used"] = lic.get("used", 0) + 1
-                upload_json(data)
-                return jsonify({"success": True, "message": "✅ License used count updated"})
+    found = False
+    for lic in data["licenses"]:
+        if lic["license_key"] == key:
+            lic["used"] = lic.get("used", 0) + 1
+            found = True
+            break
 
-        return jsonify({"success": False, "message": "❌ License not found"}), 404
+    if not found:
+        return jsonify({"success": False, "error": "License key not found"}), 404
 
-    except Exception as e:
-        return jsonify({"success": False, "message": f"❌ Error: {str(e)}"}), 500
+    if upload_json(data):
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": "Upload failed"}), 500
 
-# ✅ Root API check
-@app.route("/", methods=["GET"])
-def home():
-    return "✅ License Server is Running"
-
-# ✅ Production Render Support
+# ✅ Run server on Render
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=10000)
