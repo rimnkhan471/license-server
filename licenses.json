@@ -1,1 +1,18 @@
-
+{
+  "licenses": [
+    {
+      "license_key": "RIMON-1234-ABCD",
+      "max_devices": 2,
+      "used": 1,
+      "expire": "2025-12-31",
+      "blocked": false
+    },
+    {
+      "license_key": "TEST-9999-XYZ",
+      "max_devices": 1,
+      "used": 1,
+      "expire": "2024-12-31",
+      "blocked": true
+    }
+  ]
+}
